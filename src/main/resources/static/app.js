@@ -9,6 +9,8 @@ var app = (function () {
 
     var stompClient = null;
 
+    var sessionID = null;
+
     var TOPIC_ADDRESS = '/topic/newpoint';
 
     var addPointToCanvas = function (point) {
@@ -38,7 +40,7 @@ var app = (function () {
         //subscribe to TOPIC_ADDRESS when connections succeed
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe(TOPIC_ADDRESS, function (eventbody) {
+            stompClient.subscribe(TOPIC_ADDRESS + '.' + sessionID, function (eventbody) {
                 var point = JSON.parse(eventbody.body);
                 addPointToCanvas(point);
 //                alert("Point (" + point.x + ',' + point.y + ')');
@@ -47,23 +49,39 @@ var app = (function () {
 
     };
 
+    var connect = function (session) {
+        if (session === null || session == '') {
+            alert('Invalid session id.');
+            return;
+        }
+        sessionID = session;
+        // websocket connection
+        connectAndSubscribe();
+        $('#connectBtn').prop('disabled', true);
+        $('#sendBtn').prop('disabled', false);
+
+    }
+
     var init = function () {
         var can = document.getElementById("canvas");
+        $('#sendBtn').prop('disabled', true);
 
-        //websocket connection
-        connectAndSubscribe();
         canvas.addEventListener("mousedown", function (e) {
             point = getMousePosition(e);
-            publishPoint(point.x,point.y);
+            publishPoint(point.x, point.y);
         }, false);
     };
 
     var publishPoint = function (px, py) {
         var pt = new Point(px, py);
+        if (sessionID === null) {
+            alert('Not yet logged in.');
+            return;
+        }
         console.info("publishing point at " + pt);
         addPointToCanvas(pt);
         //publicar el evento
-        stompClient.send("/topic/newpoint", {}, JSON.stringify(pt));
+        stompClient.send("/topic/newpoint"+'.'+sessionID, {}, JSON.stringify(pt));
     };
 
     var disconnect = function () {
@@ -77,7 +95,8 @@ var app = (function () {
     return {
         init: init,
         publishPoint: publishPoint,
-        disconnect: disconnect
+        disconnect: disconnect,
+        connect: connect
     };
 
 })();
