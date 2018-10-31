@@ -7,17 +7,40 @@ var app = (function () {
         }
     }
 
+    class Polygon {
+        constructor(points) {
+            this.points = points;
+        }
+    }
+
     var stompClient = null;
 
     var sessionID = null;
 
-    var TOPIC_ADDRESS = '/topic/newpoint';
+    var TOPIC_POINT_ADDRESS = '/topic/newpoint';
+
+    var TOPIC_POLYGON_ADDRESS = '/topic/newpolygon';
+
+    var PUBLISH_ADDRESS = '/app/newpoint';
 
     var addPointToCanvas = function (point) {
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
         ctx.beginPath();
         ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+        ctx.stroke();
+    };
+
+    var addPolygonToCanvas = function (polygon) {
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        var points = polygon.points;
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (i in points) {
+            ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.closePath();
         ctx.stroke();
     };
 
@@ -37,13 +60,20 @@ var app = (function () {
         var socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
 
-        //subscribe to TOPIC_ADDRESS when connections succeed
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe(TOPIC_ADDRESS + '.' + sessionID, function (eventbody) {
+
+            //subscribe to TOPIC_POINT_ADDRESS when connections succeed
+            stompClient.subscribe(TOPIC_POINT_ADDRESS + '.' + sessionID, function (eventbody) {
                 var point = JSON.parse(eventbody.body);
                 addPointToCanvas(point);
 //                alert("Point (" + point.x + ',' + point.y + ')');
+            });
+
+            //subscribe to TOPIC_POLYGON_ADDRESS when connections succeed
+            stompClient.subscribe(TOPIC_POLYGON_ADDRESS + '.' + sessionID, function (eventbody) {
+                var polygon = JSON.parse(eventbody.body);
+                addPolygonToCanvas(polygon);
             });
         });
 
@@ -81,7 +111,7 @@ var app = (function () {
         console.info("publishing point at " + pt);
         addPointToCanvas(pt);
         //publicar el evento
-        stompClient.send("/topic/newpoint"+'.'+sessionID, {}, JSON.stringify(pt));
+        stompClient.send(PUBLISH_ADDRESS + '.' + sessionID, {}, JSON.stringify(pt));
     };
 
     var disconnect = function () {
