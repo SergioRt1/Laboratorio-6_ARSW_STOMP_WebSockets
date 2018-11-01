@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         Y:<input id="y" type="number"/>        
         <button id='sendBtn' onclick="app.publishPoint($('#x').val(),$('#y').val())">Send point</button>
         Y:<input id="sesion" type="number"/>        
-        <button id='connectBtn' onclick="app.connect($('#sesion').val())">Connect</button>
+        <button id='connectBtn' onclick="app.connect($('#sesion').val())" disabled="">Connect</button>
         <canvas id="canvas" width="800" height="600"></canvas>
     </body>
 </html>

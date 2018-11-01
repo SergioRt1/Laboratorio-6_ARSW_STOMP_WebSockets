@@ -11,4 +11,5 @@ public class CollabPaintApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CollabPaintApplication.class, args);
 	}
+        
 }

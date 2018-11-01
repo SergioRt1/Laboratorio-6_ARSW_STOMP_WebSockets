@@ -42,6 +42,7 @@ var app = (function () {
         }
         ctx.closePath();
         ctx.stroke();
+        ctx.fill();
     };
 
 
@@ -78,6 +79,7 @@ var app = (function () {
         });
 
     };
+    
 
     var connect = function (session) {
         if (session === null || session == '') {
