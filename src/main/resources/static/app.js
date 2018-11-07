@@ -35,6 +35,7 @@ var app = (function () {
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
         var points = polygon.points;
+        ctx.fillStyle = '#FFBF00';
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
         for (i in points) {

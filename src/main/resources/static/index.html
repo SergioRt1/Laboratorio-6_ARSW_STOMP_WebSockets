@@ -28,13 +28,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </head>
 
 
-    
-    <body onload="app.init()">
-        X:<input id="x" type="number"/>
-        Y:<input id="y" type="number"/>        
-        <button id='sendBtn' onclick="app.publishPoint($('#x').val(),$('#y').val())">Send point</button>
-        Y:<input id="sesion" type="number"/>        
-        <button id='connectBtn' onclick="app.connect($('#sesion').val())" disabled="">Connect</button>
-        <canvas id="canvas" width="800" height="600"></canvas>
+
+    <body onload="app.init()" style="background: beige">
+        <center>
+            X:<input id="x" type="number"/>
+            Y:<input id="y" type="number"/>        
+            <button id='sendBtn' onclick="app.publishPoint($('#x').val(), $('#y').val())">Send point</button>
+            SesionID:<input id="sesion" type="number"/>        
+            <button id='connectBtn' onclick="app.connect($('#sesion').val())" >Connect</button>
+            <br>
+            <canvas id="canvas" width="800" height="600" style="border: 1px solid #ccc!important; border-radius: 16px;margin: 10px;"></canvas>
+            <br>
+            <p>Link <a href="https://github.com/SergioRt1/Laboratorio-6_ARSW_STOMP_WebSockets">GitHub</a></p>
+            <p>Made by <a>Sergio Rodríguez</a> </p>
+        </center>
     </body>
+
 </html>
